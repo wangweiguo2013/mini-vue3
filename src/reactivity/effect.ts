@@ -7,7 +7,7 @@ class ReactiveEffect{
     run(){
         // 全局一次只有一个正在执行的effect(vue2中的watcher)
         activeEffect = this
-        this._fn()
+        return this._fn()
     }
 }
 
@@ -44,4 +44,6 @@ export const track  = function(target, key){
 export const effect = function(fn){
     const _effect = new ReactiveEffect(fn)
     _effect.run()
+
+    return _effect.run.bind(_effect)
 }
