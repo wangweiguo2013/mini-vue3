@@ -1,5 +1,3 @@
-
-
 class ReactiveEffect{
     private _fn: any
     constructor(fn){
