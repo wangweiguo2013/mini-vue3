@@ -1,5 +1,5 @@
 import { reactive } from "../reactive"
-import { effect } from "../effect"
+import { effect, stop } from "../effect"
 
 
 describe('effect', () => {
@@ -57,6 +57,22 @@ describe('effect', () => {
         // should have run 
         expect(dummy).toBe(2)
 
+    })
+
+    it.skip('should stop on stop method is called', () => {
+        let dummy: any
+        let observed = reactive({foo: 1})
+        const runner = effect(()=> { dummy = observed.foo})
+
+        expect(dummy).toBe(1)
+        stop(runner)
+
+        observed.foo++
+        expect(dummy).toBe(1)
+
+        runner()
+
+        expect(dummy).toBe(3)
     })
 
 })

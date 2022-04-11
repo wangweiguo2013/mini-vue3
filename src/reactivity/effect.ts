@@ -1,6 +1,7 @@
 class ReactiveEffect {
     private _fn: any
     public scheduler: any
+    isActive = true
     constructor(fn, scheduler?) {
         this._fn = fn
         this.scheduler = scheduler
@@ -8,8 +9,16 @@ class ReactiveEffect {
 
     run() {
         // 全局一次只有一个正在执行的effect(vue2中的watcher)
+        if(!this.isActive) return
         activeEffect = this
         return this._fn()
+    }
+
+    stop(){
+        if(this.isActive) {
+            this.isActive = false
+            cleanupTrack(this)
+        }
     }
 }
 
@@ -47,9 +56,20 @@ export const track = function (target, key) {
     dep.add(activeEffect)
 }
 
-export const effect = function (fn, options = {}) {
+export const effect = function (fn, options:any = {}) {
     const _effect = new ReactiveEffect(fn, options.scheduler)
     _effect.run()
 
-    return _effect.run.bind(_effect)
+    fn._effect = _effect
+
+    const runner: any =  _effect.run.bind(_effect)
+    runner._effect = _effect
+    return runner
+}
+
+export const stop = (runner) => {
+    runner._effect.stop()
+}
+
+const cleanupTrack = (effect) => {
 }
