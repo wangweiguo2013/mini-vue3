@@ -59,6 +59,8 @@ export const track = function (target, key) {
         dep = new Set()
         depMap.set(key, dep)
     }
+    if(!activeEffect) return
+    
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
 }
