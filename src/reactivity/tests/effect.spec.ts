@@ -59,19 +59,17 @@ describe('effect', () => {
 
     })
 
-    it.skip('should stop on stop method is called', () => {
+    it('stop', () => {
         let dummy: any
         let observed = reactive({foo: 1})
         const runner = effect(()=> { dummy = observed.foo})
-
-        expect(dummy).toBe(1)
+        observed.foo = 2
+        expect(dummy).toBe(2)
         stop(runner)
-
-        observed.foo++
-        expect(dummy).toBe(1)
+        observed.foo = 3
+        expect(dummy).toBe(2)
 
         runner()
-
         expect(dummy).toBe(3)
     })
 
