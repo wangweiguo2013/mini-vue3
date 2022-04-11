@@ -1,11 +1,15 @@
+import { extend } from "../shared"
+
 class ReactiveEffect {
     private _fn: any
     public scheduler: any
     deps = []
     isActive = true
-    constructor(fn, scheduler?) {
+    onStop?: () => void
+    constructor(fn, { scheduler, onStop}) {
         this._fn = fn
-        this.scheduler = scheduler
+        if(scheduler) this.scheduler = scheduler
+        if(onStop)this.onStop = this.onStop
     }
 
     run() {
@@ -19,6 +23,7 @@ class ReactiveEffect {
         if(this.isActive) {
             cleanupEffect(this)
             this.isActive = false;
+            if(this.onStop) this.onStop()
         }
     }
 }
@@ -59,7 +64,9 @@ export const track = function (target, key) {
 }
 
 export const effect = function (fn, options:any = {}) {
-    const _effect = new ReactiveEffect(fn, options.scheduler)
+    const _effect = new ReactiveEffect(fn, options)
+    extend(_effect, options)
+
     _effect.run()
 
     fn._effect = _effect
