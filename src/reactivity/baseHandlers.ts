@@ -1,8 +1,19 @@
 import { trigger, track } from './effect'
 
+export const enum ReactiveFlags {
+    IS_REACTIVE = '__v_is_reactive',
+    IS_READONLY = '__v_is_readonly'
+}
+
 const createGetter = function (isReadOnly = false) {
     return function (target, key) {
         const res = Reflect.get(target, key)
+
+        if (key === ReactiveFlags.IS_REACTIVE) {
+            return !isReadOnly
+        } else if (key === ReactiveFlags.IS_READONLY) {
+            return isReadOnly
+        }
         // 收集依赖
         if (!isReadOnly) {
             track(target, key)
