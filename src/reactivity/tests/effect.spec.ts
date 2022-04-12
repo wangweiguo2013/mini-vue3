@@ -71,6 +71,11 @@ describe('effect', () => {
 
         runner()
         expect(dummy).toBe(3)
+
+        // 触发get，会重新进入依赖收集
+        // 需要把stop的effect阻止依赖收集
+        observed.foo++
+        expect(dummy).toBe(3)
     })
 
     it('onStop', () => {

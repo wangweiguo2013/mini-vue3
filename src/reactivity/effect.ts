@@ -1,5 +1,8 @@
 import { extend } from "../shared"
 
+let activeEffect
+let shouldTrack
+
 class ReactiveEffect {
     private _fn: any
     public scheduler: any
@@ -15,8 +18,16 @@ class ReactiveEffect {
     run() {
         // 全局一次只有一个正在执行的effect(vue2中的watcher)
         // if(!this.isActive) return this._fn()
+    
+        if(!this.isActive) return this._fn()
+
         activeEffect = this
-        return this._fn()
+        shouldTrack = true
+
+        const result = this._fn()
+
+        shouldTrack = false
+        return result
     }
 
     stop(){
@@ -29,7 +40,6 @@ class ReactiveEffect {
 }
 
 const targetMap = new Map()
-let activeEffect
 
 export const trigger = function (target, key) {
     // 取出该key的依赖
@@ -48,6 +58,8 @@ export const trigger = function (target, key) {
 
 //收集依赖
 export const track = function (target, key) {
+    if(!canTrack()) return
+
     // 取出该key的依赖
     let depMap = targetMap.get(target)
     if (!depMap) {
@@ -59,10 +71,13 @@ export const track = function (target, key) {
         dep = new Set()
         depMap.set(key, dep)
     }
-    if(!activeEffect) return
     
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
+}
+
+const canTrack = function(){
+    return shouldTrack && activeEffect !== undefined
 }
 
 export const effect = function (fn, options:any = {}) {
@@ -86,4 +101,6 @@ const cleanupEffect = (effect) => {
     effect.deps.forEach(dep => {
         dep.delete(effect)
     })
+    // 可以直接清空effect的deps
+    effect.deps.length = 0
 }
