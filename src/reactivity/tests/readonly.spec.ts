@@ -20,5 +20,12 @@ describe('readonly', () => {
         user.age = 12
         expect(console.warn).toBeCalled()
     })
+    it('deep proxy', () => {
+        const original = { foo: { bar: [ { biz: 1 } ] } }
+        const observed = readonly(original)
+
+        expect(isReadOnly(observed.foo)).toBe(true)
+        expect(isReadOnly(observed.foo.bar[0])).toBe(true)
+    })
 
 })

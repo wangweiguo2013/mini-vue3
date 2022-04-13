@@ -1,4 +1,6 @@
+import { isObject } from '../shared'
 import { trigger, track } from './effect'
+import { reactive, readonly } from './reactive'
 
 export const enum ReactiveFlags {
     IS_REACTIVE = '__v_is_reactive',
@@ -9,11 +11,16 @@ const createGetter = function (isReadOnly = false) {
     return function (target, key) {
         const res = Reflect.get(target, key)
 
+        if(isObject(res)) {
+            return isReadOnly ? readonly(res) :reactive(res)
+        }
+
         if (key === ReactiveFlags.IS_REACTIVE) {
             return !isReadOnly
         } else if (key === ReactiveFlags.IS_READONLY) {
             return isReadOnly
         }
+
         // 收集依赖
         if (!isReadOnly) {
             track(target, key)

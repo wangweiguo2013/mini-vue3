@@ -11,4 +11,12 @@ describe('reactive', () => {
         expect(isReactive(original)).toBe(false)
         expect(isReactive(observed)).toBe(true)
     })
+
+    it('deep proxy', () => {
+        const original = { foo: { bar: [ { biz: 1 } ] } }
+        const observed = reactive(original)
+
+        expect(isReactive(observed.foo)).toBe(true)
+        expect(isReactive(observed.foo.bar[0])).toBe(true)
+    })
 })
