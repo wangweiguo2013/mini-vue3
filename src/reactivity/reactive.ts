@@ -1,4 +1,4 @@
-import { mutableHandlers, ReactiveFlags, readonlyHandlers } from "./baseHandlers"
+import { mutableHandlers, ReactiveFlags, readonlyHandlers, shallowReadonlyHandlers } from "./baseHandlers"
 
 export const reactive = function (raw) {
     return new Proxy(raw, mutableHandlers)
@@ -6,6 +6,10 @@ export const reactive = function (raw) {
 
 export const readonly = function (raw) {
     return createActiveObject(raw, readonlyHandlers)
+}
+
+export const shallowReadonly = function (raw) {
+    return createActiveObject(raw, shallowReadonlyHandlers)
 }
 
 const createActiveObject = function(raw, handler) {

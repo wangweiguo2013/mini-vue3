@@ -1,4 +1,4 @@
-import { isReadOnly, readonly } from "../reactive"
+import { isReadOnly, readonly, shallowReadonly } from "../reactive"
 
 
 describe('readonly', () => {
@@ -26,6 +26,13 @@ describe('readonly', () => {
 
         expect(isReadOnly(observed.foo)).toBe(true)
         expect(isReadOnly(observed.foo.bar[0])).toBe(true)
+    })
+    it('shallow readonly', () => {
+        const original = { foo: { bar: 1 } }
+        const observed = shallowReadonly(original)
+
+        expect(isReadOnly(observed)).toBe(true)
+        expect(isReadOnly(observed.foo)).toBe(false)
     })
 
 })
