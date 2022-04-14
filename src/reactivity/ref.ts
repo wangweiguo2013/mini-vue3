@@ -9,6 +9,7 @@ class RefImplement {
     // ! 维护自己的dep
     // ref只有一个dep，不必像reactive维护一个map，因为只有一个.value值
     private dep: Set<any>
+    public __v_isRef = true
     constructor(value) {
         this._value = convert(value)
         this._rawValue = value
@@ -36,4 +37,12 @@ export const ref = function (value) {
 
 function convert(value) {
     return isObject(value) ? reactive(value) : value
+}
+
+export const isRef = function (value) {
+    return !!value.__v_isRef
+}
+
+export const unRef = function (value) {
+    return isRef(value) ? value.value : value
 }
