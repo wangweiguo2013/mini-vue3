@@ -48,18 +48,12 @@ export const trigger = function (target, key) {
 
     const dep = depMap.get(key)
     // 执行依赖
-    dep.forEach((_effect) => {
-        if (_effect.scheduler) {
-            _effect.scheduler()
-        } else {
-            _effect.run()
-        }
-    })
+    triggerEffect(dep)
 }
 
 //收集依赖
 export const track = function (target, key) {
-    if (!canTrack()) return
+    if (!isTracking()) return
 
     // 取出该key的依赖
     let depMap = targetMap.get(target)
@@ -73,11 +67,27 @@ export const track = function (target, key) {
         depMap.set(key, dep)
     }
 
+    trackEffect(dep)
+}
+
+export const trackEffect = function (dep) {
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
 }
 
-const canTrack = function () {
+export const triggerEffect = function (dep) {
+    // 优化
+    if (!dep.has(activeEffect)) return
+    dep.forEach((_effect) => {
+        if (_effect.scheduler) {
+            _effect.scheduler()
+        } else {
+            _effect.run()
+        }
+    })
+}
+
+export const isTracking = function () {
     return shouldTrack && activeEffect !== undefined
 }
 
