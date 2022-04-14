@@ -1,6 +1,5 @@
-import { reactive } from "../reactive"
-import { effect, stop } from "../effect"
-
+import { reactive } from '../reactive'
+import { effect, stop } from '../effect'
 
 describe('effect', () => {
     it('happy path', () => {
@@ -18,7 +17,7 @@ describe('effect', () => {
     })
 
     it('effect should return a runner', () => {
-        let foo = 10;
+        let foo = 10
         const runner = effect(() => {
             foo++
             return 'foo'
@@ -33,8 +32,8 @@ describe('effect', () => {
         // effect第一次会执行传入的第一个参数 fn
         // 当响应式对象更新的时候，不会执行fn，而是会执行scheduler
         // 当执行runner的时候，会再次执行fn
-        let dummy;
-        let run: any;
+        let dummy
+        let run: any
         const scheduler = jest.fn(() => {
             run = runner
         })
@@ -45,7 +44,7 @@ describe('effect', () => {
             },
             { scheduler }
         )
-        expect(scheduler).not.toHaveBeenCalled();
+        expect(scheduler).not.toHaveBeenCalled()
         expect(dummy).toBe(1)
         // should be called on first trigger
         obj.foo++
@@ -54,15 +53,16 @@ describe('effect', () => {
         expect(dummy).toBe(1)
         // manually run
         run()
-        // should have run 
+        // should have run
         expect(dummy).toBe(2)
-
     })
 
     it('stop', () => {
         let dummy: any
-        let observed = reactive({ foo: 1 })
-        const runner = effect(() => { dummy = observed.foo })
+        const observed = reactive({ foo: 1 })
+        const runner = effect(() => {
+            dummy = observed.foo
+        })
         observed.foo = 2
         expect(dummy).toBe(2)
         stop(runner)
@@ -84,7 +84,9 @@ describe('effect', () => {
 
         let dummy
         const runner = effect(
-            () => { dummy = obj.foo },
+            () => {
+                dummy = obj.foo
+            },
             {
                 onStop
             }
@@ -92,6 +94,4 @@ describe('effect', () => {
         stop(runner)
         expect(onStop).toBeCalledTimes(1)
     })
-
-
 })

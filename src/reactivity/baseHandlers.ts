@@ -1,6 +1,6 @@
 import { extend, isObject } from '../shared'
 import { trigger, track } from './effect'
-import { reactive, readonly, shallowReadonly } from './reactive'
+import { reactive, readonly } from './reactive'
 
 export const enum ReactiveFlags {
     IS_REACTIVE = '__v_is_reactive',
@@ -11,8 +11,8 @@ const createGetter = function (isReadOnly = false, isShallow = false) {
     return function (target, key) {
         const res = Reflect.get(target, key)
 
-        if(isObject(res) && !isShallow) {
-            return isReadOnly ? readonly(res) :reactive(res)
+        if (isObject(res) && !isShallow) {
+            return isReadOnly ? readonly(res) : reactive(res)
         }
 
         if (key === ReactiveFlags.IS_REACTIVE) {
@@ -34,7 +34,7 @@ const createSetter = function () {
         const res = Reflect.set(target, key, value)
         // 触发依赖
         trigger(target, key)
-        return res;
+        return res
     }
 }
 
@@ -53,7 +53,12 @@ export const mutableHandlers = {
 export const readonlyHandlers = {
     get: readonlyGet,
     set: function (target, key, value) {
-        console.warn(`read only object's cannot be set, accessing key is ${String(key)}, value is ${value}`, target)
+        console.warn(
+            `read only object's cannot be set, accessing key is ${String(
+                key
+            )}, value is ${value}`,
+            target
+        )
         return true
     }
 }

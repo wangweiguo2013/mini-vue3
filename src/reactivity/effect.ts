@@ -1,4 +1,4 @@
-import { extend } from "../shared"
+import { extend } from '../shared'
 
 let activeEffect
 let shouldTrack
@@ -9,17 +9,17 @@ class ReactiveEffect {
     deps = []
     isActive = true
     onStop?: () => void
-    constructor(fn, { scheduler, onStop}) {
+    constructor(fn, { scheduler, onStop }) {
         this._fn = fn
-        if(scheduler) this.scheduler = scheduler
-        if(onStop)this.onStop = this.onStop
+        if (scheduler) this.scheduler = scheduler
+        if (onStop) this.onStop = onStop
     }
 
     run() {
         // 全局一次只有一个正在执行的effect(vue2中的watcher)
         // if(!this.isActive) return this._fn()
-    
-        if(!this.isActive) return this._fn()
+
+        if (!this.isActive) return this._fn()
 
         activeEffect = this
         shouldTrack = true
@@ -30,11 +30,11 @@ class ReactiveEffect {
         return result
     }
 
-    stop(){
-        if(this.isActive) {
+    stop() {
+        if (this.isActive) {
             cleanupEffect(this)
-            this.isActive = false;
-            if(this.onStop) this.onStop()
+            this.isActive = false
+            if (this.onStop) this.onStop()
         }
     }
 }
@@ -58,7 +58,7 @@ export const trigger = function (target, key) {
 
 //收集依赖
 export const track = function (target, key) {
-    if(!canTrack()) return
+    if (!canTrack()) return
 
     // 取出该key的依赖
     let depMap = targetMap.get(target)
@@ -71,16 +71,16 @@ export const track = function (target, key) {
         dep = new Set()
         depMap.set(key, dep)
     }
-    
+
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
 }
 
-const canTrack = function(){
+const canTrack = function () {
     return shouldTrack && activeEffect !== undefined
 }
 
-export const effect = function (fn, options:any = {}) {
+export const effect = function (fn, options: any = {}) {
     const _effect = new ReactiveEffect(fn, options)
     extend(_effect, options)
 
@@ -88,7 +88,7 @@ export const effect = function (fn, options:any = {}) {
 
     fn._effect = _effect
 
-    const runner: any =  _effect.run.bind(_effect)
+    const runner: any = _effect.run.bind(_effect)
     runner._effect = _effect
     return runner
 }
@@ -98,7 +98,7 @@ export const stop = (runner) => {
 }
 
 const cleanupEffect = (effect) => {
-    effect.deps.forEach(dep => {
+    effect.deps.forEach((dep) => {
         dep.delete(effect)
     })
     // 可以直接清空effect的deps

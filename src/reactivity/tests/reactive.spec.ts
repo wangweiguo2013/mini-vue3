@@ -1,5 +1,4 @@
-import { isReactive, reactive } from "../reactive"
-
+import { isReactive, reactive } from '../reactive'
 
 describe('reactive', () => {
     it('happy path', () => {
@@ -13,7 +12,7 @@ describe('reactive', () => {
     })
 
     it('deep proxy', () => {
-        const original = { foo: { bar: [ { biz: 1 } ] } }
+        const original = { foo: { bar: [{ biz: 1 }] } }
         const observed = reactive(original)
 
         expect(isReactive(observed.foo)).toBe(true)

@@ -1,5 +1,4 @@
-import { isReadOnly, readonly, shallowReadonly } from "../reactive"
-
+import { isReadOnly, readonly, shallowReadonly } from '../reactive'
 
 describe('readonly', () => {
     it('happy path', () => {
@@ -21,7 +20,7 @@ describe('readonly', () => {
         expect(console.warn).toBeCalled()
     })
     it('deep proxy', () => {
-        const original = { foo: { bar: [ { biz: 1 } ] } }
+        const original = { foo: { bar: [{ biz: 1 }] } }
         const observed = readonly(original)
 
         expect(isReadOnly(observed.foo)).toBe(true)
@@ -34,5 +33,4 @@ describe('readonly', () => {
         expect(isReadOnly(observed)).toBe(true)
         expect(isReadOnly(observed.foo)).toBe(false)
     })
-
 })
