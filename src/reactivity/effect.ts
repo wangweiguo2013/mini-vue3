@@ -1,6 +1,7 @@
 import { extend } from '../shared'
 
 let activeEffect
+// 被stop的effect不能被收集依赖
 let shouldTrack
 
 class ReactiveEffect {
@@ -86,9 +87,8 @@ export const effect = function (fn, options: any = {}) {
 
     _effect.run()
 
-    fn._effect = _effect
-
     const runner: any = _effect.run.bind(_effect)
+    // 挂载到runner上，方便执行stop
     runner._effect = _effect
     return runner
 }
