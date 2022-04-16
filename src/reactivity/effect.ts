@@ -4,16 +4,15 @@ let activeEffect
 // 被stop的effect不能被收集依赖
 let shouldTrack
 
-class ReactiveEffect {
+export class ReactiveEffect {
     private _fn: any
     public scheduler: any
     deps = []
     isActive = true
     onStop?: () => void
-    constructor(fn, { scheduler, onStop }) {
+    constructor(fn, scheduler?) {
         this._fn = fn
-        if (scheduler) this.scheduler = scheduler
-        if (onStop) this.onStop = onStop
+        this.scheduler = scheduler
     }
 
     run() {
@@ -92,7 +91,7 @@ export const isTracking = function () {
 }
 
 export const effect = function (fn, options: any = {}) {
-    const _effect = new ReactiveEffect(fn, options)
+    const _effect = new ReactiveEffect(fn)
     extend(_effect, options)
 
     _effect.run()
