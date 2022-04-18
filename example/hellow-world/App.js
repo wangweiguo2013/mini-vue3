@@ -7,6 +7,9 @@ export const App = {
         }
     },
     render() {
-        return h('div', 'hi' + this.msg)
+        return h('div', { class: ['root', 'con'], id: 'root' }, [
+            h('p', { style: 'color: red' }, 'hi'),
+            h('p', { style: 'color:blue' }, 'mini - vue')
+        ])
     }
 }

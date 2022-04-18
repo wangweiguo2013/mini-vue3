@@ -1,10 +1,17 @@
+import { isObject } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
 
-export const render = (vnode, container) => {}
+export const render = (vnode, container) => {
+    patch(vnode, container)
+}
 
 export const patch = (vnode, container) => {
-    processElement(vnode, container)
-    processComponent(vnode, container)
+    console.log(vnode.type)
+    if (typeof vnode.type === 'string') {
+        processElement(vnode, container)
+    } else if (isObject(vnode.type)) {
+        processComponent(vnode, container)
+    }
 }
 
 function processComponent(vnode: any, container) {
@@ -21,5 +28,18 @@ function setupRenderEffect(instance, container: any) {
     patch(subTree, container)
 }
 function processElement(vnode: any, container: any) {
-    throw new Error('Function not implemented.')
+    const el = document.createElement(vnode.type)
+    const { props, children } = vnode
+    for (const key in props) {
+        const value = props[key]
+        el.setAttribute(key, value)
+    }
+    if (typeof children === 'string') {
+        el.textContent = children
+    } else if (Array.isArray(children)) {
+        children.forEach((v) => {
+            patch(v, el)
+        })
+    }
+    container.append(el)
 }
