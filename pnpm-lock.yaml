@@ -4,6 +4,7 @@ specifiers:
   '@babel/core': ^7.17.9
   '@babel/preset-env': ^7.16.11
   '@babel/preset-typescript': ^7.16.7
+  '@rollup/plugin-typescript': ^8.3.2
   '@types/jest': ^27.4.1
   '@typescript-eslint/eslint-plugin': ^5.19.0
   '@typescript-eslint/parser': ^5.19.0
@@ -13,7 +14,14 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   jest: ^27.5.1
   prettier: ^2.6.2
+  rollup: ^2.70.2
+  tslib: ^2.3.1
   typescript: ^4.6.3
+
+dependencies:
+  '@rollup/plugin-typescript': 8.3.2_eaab4980cb5a437133211ecd98513266
+  rollup: 2.70.2
+  tslib: 2.3.1
 
 devDependencies:
   '@babel/core': artifactory.intra.xiaojukeji.com/@babel/core/7.17.9
@@ -84,6 +92,37 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
     dev: true
+
+  /@rollup/plugin-typescript/8.3.2_eaab4980cb5a437133211ecd98513266:
+    resolution: {integrity: sha512-MtgyR5LNHZr3GyN0tM7gNO9D0CS+Y+vflS4v/PHmrX17JCkHUYKvQ5jN5o3cz1YKllM3duXUqu3yOHwMPUxhDg==}
+    engines: {node: '>=8.0.0'}
+    peerDependencies:
+      rollup: ^2.14.0
+      tslib: '*'
+      typescript: '>=3.7.0'
+    dependencies:
+      '@rollup/pluginutils': 3.1.0_rollup@2.70.2
+      resolve: 1.22.0
+      rollup: 2.70.2
+      tslib: 2.3.1
+      typescript: artifactory.intra.xiaojukeji.com/typescript/4.6.3
+    dev: false
+
+  /@rollup/pluginutils/3.1.0_rollup@2.70.2:
+    resolution: {integrity: sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==}
+    engines: {node: '>= 8.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0
+    dependencies:
+      '@types/estree': 0.0.39
+      estree-walker: 1.0.1
+      picomatch: 2.3.1
+      rollup: 2.70.2
+    dev: false
+
+  /@types/estree/0.0.39:
+    resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
+    dev: false
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
@@ -488,6 +527,10 @@ packages:
     engines: {node: '>=4.0'}
     dev: true
 
+  /estree-walker/1.0.1:
+    resolution: {integrity: sha512-1fMXF3YP4pZZVozF8j/ZLfvnR8NSIljt56UhbZ5PeeDmmGHpgpdwQt7ITlGvYaQukCvuBRMLEiKiYC+oeIg4cg==}
+    dev: false
+
   /esutils/2.0.3:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
@@ -561,8 +604,10 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
+
+  /function-bind/1.1.1:
+    resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==}
 
   /functional-red-black-tree/1.0.1:
     resolution: {integrity: sha512-dsKNQNdj6xA3T+QlADDA7mOSlX0qiMINjn0cgr+eGHGsbSHzTabcIogz2+p/iqP1Xs6EP/sS2SbqH+brGTbq0g==}
@@ -617,6 +662,12 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /has/1.0.3:
+    resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
+    engines: {node: '>= 0.4.0'}
+    dependencies:
+      function-bind: 1.1.1
+
   /ignore/5.2.0:
     resolution: {integrity: sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==}
     engines: {node: '>= 4'}
@@ -645,6 +696,11 @@ packages:
   /inherits/2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
     dev: true
+
+  /is-core-module/2.8.1:
+    resolution: {integrity: sha512-SdNCUs284hr40hFTFP6l0IfZ/RSrMXF3qgoRHd3/79unUTvrFO/JoXwkGm+5J/Oe3E/b5GsnG330uUNgRpu1PA==}
+    dependencies:
+      has: 1.0.3
 
   /is-extglob/2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
@@ -770,6 +826,9 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /path-parse/1.0.7:
+    resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
+
   /path-type/4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
@@ -778,7 +837,6 @@ packages:
   /picomatch/2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
-    dev: true
 
   /prelude-ls/1.1.2:
     resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}
@@ -822,6 +880,14 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
+  /resolve/1.22.0:
+    resolution: {integrity: sha512-Hhtrw0nLeSrFQ7phPp4OOcVjLPIeMnRlr5mcnVuMe7M/7eBn98A3hmFRLoFo3DLZkivSYwhRUJTyPyWAk56WLw==}
+    hasBin: true
+    dependencies:
+      is-core-module: 2.8.1
+      path-parse: 1.0.7
+      supports-preserve-symlinks-flag: 1.0.0
+
   /reusify/1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
@@ -833,6 +899,14 @@ packages:
     dependencies:
       glob: 7.2.0
     dev: true
+
+  /rollup/2.70.2:
+    resolution: {integrity: sha512-EitogNZnfku65I1DD5Mxe8JYRUCy0hkK5X84IlDtUs+O6JRMpRciXTzyCUuX11b5L5pvjH+OmFXiQ3XjabcXgg==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: false
 
   /run-parallel/1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
@@ -890,6 +964,10 @@ packages:
       has-flag: 4.0.0
     dev: true
 
+  /supports-preserve-symlinks-flag/1.0.0:
+    resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
+    engines: {node: '>= 0.4'}
+
   /text-table/0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
     dev: true
@@ -904,6 +982,10 @@ packages:
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
+
+  /tslib/2.3.1:
+    resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
+    dev: false
 
   /tsutils/3.21.0_typescript@4.6.3:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
@@ -1107,7 +1189,7 @@ packages:
       '@babel/traverse': artifactory.intra.xiaojukeji.com/@babel/traverse/7.17.9
       debug: artifactory.intra.xiaojukeji.com/debug/4.3.4
       lodash.debounce: artifactory.intra.xiaojukeji.com/lodash.debounce/4.0.8
-      resolve: artifactory.intra.xiaojukeji.com/resolve/1.22.0
+      resolve: 1.22.0
       semver: artifactory.intra.xiaojukeji.com/semver/6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -2914,7 +2996,7 @@ packages:
     engines: {node: '>= 8'}
     dependencies:
       normalize-path: artifactory.intra.xiaojukeji.com/normalize-path/3.0.0
-      picomatch: artifactory.intra.xiaojukeji.com/picomatch/2.3.1
+      picomatch: 2.3.1
     dev: true
 
   artifactory.intra.xiaojukeji.com/argparse/1.0.10:
@@ -3133,7 +3215,7 @@ packages:
     name: call-bind
     version: 1.0.2
     dependencies:
-      function-bind: artifactory.intra.xiaojukeji.com/function-bind/1.1.1
+      function-bind: 1.1.1
       get-intrinsic: artifactory.intra.xiaojukeji.com/get-intrinsic/1.1.1
     dev: true
 
@@ -3586,12 +3668,6 @@ packages:
     version: 1.0.0
     dev: true
 
-  artifactory.intra.xiaojukeji.com/function-bind/1.1.1:
-    resolution: {integrity: sha1-pWiZ0+o8m6uHS7l3O3xe3pL0iV0=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/function-bind/-/function-bind-1.1.1.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Ffunction-bind%2F-%2Ffunction-bind-1.1.1.tgz}
-    name: function-bind
-    version: 1.1.1
-    dev: true
-
   artifactory.intra.xiaojukeji.com/gensync/1.0.0-beta.2:
     resolution: {integrity: sha1-MqbudsPX9S1GsrGuXZP+qFgKJeA=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/gensync/-/gensync-1.0.0-beta.2.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fgensync%2F-%2Fgensync-1.0.0-beta.2.tgz}
     name: gensync
@@ -3611,8 +3687,8 @@ packages:
     name: get-intrinsic
     version: 1.1.1
     dependencies:
-      function-bind: artifactory.intra.xiaojukeji.com/function-bind/1.1.1
-      has: artifactory.intra.xiaojukeji.com/has/1.0.3
+      function-bind: 1.1.1
+      has: 1.0.3
       has-symbols: artifactory.intra.xiaojukeji.com/has-symbols/1.0.3
     dev: true
 
@@ -3675,15 +3751,6 @@ packages:
     name: has-symbols
     version: 1.0.3
     engines: {node: '>= 0.4'}
-    dev: true
-
-  artifactory.intra.xiaojukeji.com/has/1.0.3:
-    resolution: {integrity: sha1-ci18v8H2qoJB8W3YFOAR4fQeh5Y=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/has/-/has-1.0.3.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fhas%2F-%2Fhas-1.0.3.tgz}
-    name: has
-    version: 1.0.3
-    engines: {node: '>= 0.4.0'}
-    dependencies:
-      function-bind: artifactory.intra.xiaojukeji.com/function-bind/1.1.1
     dev: true
 
   artifactory.intra.xiaojukeji.com/html-encoding-sniffer/2.0.1:
@@ -3779,14 +3846,6 @@ packages:
     resolution: {integrity: sha1-d8mYQFJ6qOyxqLppe4BkWnqSap0=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/is-arrayish/-/is-arrayish-0.2.1.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fis-arrayish%2F-%2Fis-arrayish-0.2.1.tgz}
     name: is-arrayish
     version: 0.2.1
-    dev: true
-
-  artifactory.intra.xiaojukeji.com/is-core-module/2.8.1:
-    resolution: {integrity: sha1-9Z/fynAdWHnQprEApAqhVgzichE=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/is-core-module/-/is-core-module-2.8.1.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fis-core-module%2F-%2Fis-core-module-2.8.1.tgz}
-    name: is-core-module
-    version: 2.8.1
-    dependencies:
-      has: artifactory.intra.xiaojukeji.com/has/1.0.3
     dev: true
 
   artifactory.intra.xiaojukeji.com/is-fullwidth-code-point/3.0.0:
@@ -4226,7 +4285,7 @@ packages:
       jest-pnp-resolver: artifactory.intra.xiaojukeji.com/jest-pnp-resolver/1.2.2_jest-resolve@27.5.1
       jest-util: artifactory.intra.xiaojukeji.com/jest-util/27.5.1
       jest-validate: artifactory.intra.xiaojukeji.com/jest-validate/27.5.1
-      resolve: artifactory.intra.xiaojukeji.com/resolve/1.22.0
+      resolve: 1.22.0
       resolve.exports: artifactory.intra.xiaojukeji.com/resolve.exports/1.1.0
       slash: artifactory.intra.xiaojukeji.com/slash/3.0.0
     dev: true
@@ -4350,7 +4409,7 @@ packages:
       chalk: artifactory.intra.xiaojukeji.com/chalk/4.1.2
       ci-info: artifactory.intra.xiaojukeji.com/ci-info/3.3.0
       graceful-fs: artifactory.intra.xiaojukeji.com/graceful-fs/4.2.10
-      picomatch: artifactory.intra.xiaojukeji.com/picomatch/2.3.1
+      picomatch: 2.3.1
     dev: true
 
   artifactory.intra.xiaojukeji.com/jest-validate/27.5.1:
@@ -4583,7 +4642,7 @@ packages:
     engines: {node: '>=8.6'}
     dependencies:
       braces: artifactory.intra.xiaojukeji.com/braces/3.0.2
-      picomatch: artifactory.intra.xiaojukeji.com/picomatch/2.3.1
+      picomatch: 2.3.1
     dev: true
 
   artifactory.intra.xiaojukeji.com/mime-db/1.52.0:
@@ -4777,23 +4836,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  artifactory.intra.xiaojukeji.com/path-parse/1.0.7:
-    resolution: {integrity: sha1-+8EUtgykKzDZ2vWFjkvWi77bZzU=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/path-parse/-/path-parse-1.0.7.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fpath-parse%2F-%2Fpath-parse-1.0.7.tgz}
-    name: path-parse
-    version: 1.0.7
-    dev: true
-
   artifactory.intra.xiaojukeji.com/picocolors/1.0.0:
     resolution: {integrity: sha1-y1vcdP8/UYkiNur3nWi8RFZKuBw=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/picocolors/-/picocolors-1.0.0.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fpicocolors%2F-%2Fpicocolors-1.0.0.tgz}
     name: picocolors
     version: 1.0.0
-    dev: true
-
-  artifactory.intra.xiaojukeji.com/picomatch/2.3.1:
-    resolution: {integrity: sha1-O6ODNzNkbZ0+SZWUbBNlpn+wekI=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/picomatch/-/picomatch-2.3.1.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fpicomatch%2F-%2Fpicomatch-2.3.1.tgz}
-    name: picomatch
-    version: 2.3.1
-    engines: {node: '>=8.6'}
     dev: true
 
   artifactory.intra.xiaojukeji.com/pirates/4.0.5:
@@ -4945,17 +4991,6 @@ packages:
     name: resolve.exports
     version: 1.1.0
     engines: {node: '>=10'}
-    dev: true
-
-  artifactory.intra.xiaojukeji.com/resolve/1.22.0:
-    resolution: {integrity: sha1-XguMZ8Fd9XqJvbq+YDoALyFzEZg=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/resolve/-/resolve-1.22.0.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fresolve%2F-%2Fresolve-1.22.0.tgz}
-    name: resolve
-    version: 1.22.0
-    hasBin: true
-    dependencies:
-      is-core-module: artifactory.intra.xiaojukeji.com/is-core-module/2.8.1
-      path-parse: artifactory.intra.xiaojukeji.com/path-parse/1.0.7
-      supports-preserve-symlinks-flag: artifactory.intra.xiaojukeji.com/supports-preserve-symlinks-flag/1.0.0
     dev: true
 
   artifactory.intra.xiaojukeji.com/rimraf/3.0.2:
@@ -5178,13 +5213,6 @@ packages:
     dependencies:
       has-flag: artifactory.intra.xiaojukeji.com/has-flag/4.0.0
       supports-color: artifactory.intra.xiaojukeji.com/supports-color/7.2.0
-    dev: true
-
-  artifactory.intra.xiaojukeji.com/supports-preserve-symlinks-flag/1.0.0:
-    resolution: {integrity: sha1-btpL00SjyUrqN21MwxvHcxEDngk=, registry: http://npm.intra.xiaojukeji.com/, tarball: http://artifactory.intra.xiaojukeji.com/artifactory/api/npm/npm/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz?dl=https%3A%2F%2Fregistry.npmmirror.com%2Fsupports-preserve-symlinks-flag%2F-%2Fsupports-preserve-symlinks-flag-1.0.0.tgz}
-    name: supports-preserve-symlinks-flag
-    version: 1.0.0
-    engines: {node: '>= 0.4'}
     dev: true
 
   artifactory.intra.xiaojukeji.com/symbol-tree/3.2.4:
