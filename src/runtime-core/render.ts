@@ -6,7 +6,6 @@ export const render = (vnode, container) => {
 }
 
 export const patch = (vnode, container) => {
-    console.log(vnode.type)
     if (typeof vnode.type === 'string') {
         processElement(vnode, container)
     } else if (isObject(vnode.type)) {
@@ -21,21 +20,41 @@ function processComponent(vnode: any, container) {
 function mountComponent(vnode: any, container) {
     const instance = createComponentInstance(vnode)
     setupComponent(instance)
-    setupRenderEffect(instance, container)
+    const { setupState } = instance
+    instance.proxy = new Proxy(
+        {},
+        {
+            get(target, key) {
+                if (key in setupState) {
+                    return setupState[key]
+                }
+                if (key === '$el') {
+                    return instance.vnode.el
+                }
+                return target[key]
+            }
+        }
+    )
+    setupRenderEffect(instance, vnode, container)
 }
 
-function setupRenderEffect(instance, container: any) {
-    const subTree = instance.render()
+function setupRenderEffect(instance, vnode, container: any) {
+    const { proxy } = instance
+    // 组件render返回的vnode
+    const subTree = instance.render.call(proxy)
     patch(subTree, container)
+    vnode.el = subTree.el
 }
 
-function processElement(vnode: any, container: any) {
-    mountElement(vnode, container)
+function processElement(initialVNode: any, container: any) {
+    mountElement(initialVNode, container)
 }
 
-function mountElement(vnode, container) {
-    const el = document.createElement(vnode.type)
-    const { props, children } = vnode
+function mountElement(initialVNode, container) {
+    // 这里的vnode其实是element的vnode， 而不是组件的vnode
+    // 因此不能在这里给el赋值
+    const el = document.createElement(initialVNode.type)
+    const { props, children } = initialVNode
     for (const key in props) {
         const value = props[key]
         el.setAttribute(key, value)
@@ -43,8 +62,11 @@ function mountElement(vnode, container) {
     if (typeof children === 'string') {
         el.textContent = children
     } else if (Array.isArray(children)) {
-        mountChildren(vnode, el)
+        mountChildren(initialVNode, el)
     }
+
+    initialVNode.el = el
+
     container.append(el)
 }
 

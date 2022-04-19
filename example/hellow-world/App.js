@@ -3,13 +3,14 @@ import { h } from '../../lib/mini-vue.esm.js'
 export const App = {
     setup() {
         return {
-            msg: 'hello mini-vue'
+            msg: 'msg'
         }
     },
     render() {
+        window.vm = this
         return h('div', { class: ['root', 'con'], id: 'root' }, [
             h('p', { style: 'color: red' }, 'hi'),
-            h('p', { style: 'color:blue' }, 'mini - vue')
+            h('p', { style: 'color:blue' }, 'this is from ' + this.msg)
         ])
     }
 }

@@ -1,7 +1,9 @@
 export const createComponentInstance = (vnode) => {
     const component = {
         vnode,
-        type: vnode.type
+        type: vnode.type,
+        proxy: {},
+        setupState: {}
     }
     return component
 }
