@@ -23,11 +23,17 @@ function mountComponent(vnode: any, container) {
     setupComponent(instance)
     setupRenderEffect(instance, container)
 }
+
 function setupRenderEffect(instance, container: any) {
     const subTree = instance.render()
     patch(subTree, container)
 }
+
 function processElement(vnode: any, container: any) {
+    mountElement(vnode, container)
+}
+
+function mountElement(vnode, container) {
     const el = document.createElement(vnode.type)
     const { props, children } = vnode
     for (const key in props) {
@@ -37,9 +43,13 @@ function processElement(vnode: any, container: any) {
     if (typeof children === 'string') {
         el.textContent = children
     } else if (Array.isArray(children)) {
-        children.forEach((v) => {
-            patch(v, el)
-        })
+        mountChildren(vnode, el)
     }
     container.append(el)
+}
+
+function mountChildren(vnode, container) {
+    vnode.children.forEach((v) => {
+        patch(v, container)
+    })
 }
