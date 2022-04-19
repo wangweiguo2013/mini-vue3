@@ -1,5 +1,6 @@
 import { isObject } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
+import { PublicInstanceProxyHandlers } from './componentPublicInstance'
 
 export const render = (vnode, container) => {
     patch(vnode, container)
@@ -21,20 +22,10 @@ function mountComponent(vnode: any, container) {
     const instance = createComponentInstance(vnode)
     setupComponent(instance)
     const { setupState } = instance
-    instance.proxy = new Proxy(
-        {},
-        {
-            get(target, key) {
-                if (key in setupState) {
-                    return setupState[key]
-                }
-                if (key === '$el') {
-                    return instance.vnode.el
-                }
-                return target[key]
-            }
-        }
-    )
+
+    //  ctx
+    instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers)
+
     setupRenderEffect(instance, vnode, container)
 }
 
@@ -53,7 +44,7 @@ function processElement(initialVNode: any, container: any) {
 function mountElement(initialVNode, container) {
     // 这里的vnode其实是element的vnode， 而不是组件的vnode
     // 因此不能在这里给el赋值
-    const el = document.createElement(initialVNode.type)
+    const el = (initialVNode.el = document.createElement(initialVNode.type))
     const { props, children } = initialVNode
     for (const key in props) {
         const value = props[key]
@@ -64,8 +55,6 @@ function mountElement(initialVNode, container) {
     } else if (Array.isArray(children)) {
         mountChildren(initialVNode, el)
     }
-
-    initialVNode.el = el
 
     container.append(el)
 }
