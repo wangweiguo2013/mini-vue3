@@ -54,7 +54,7 @@ export const readonlyHandlers = {
     get: readonlyGet,
     set: function (target, key, value) {
         console.warn(
-            `read only object's cannot be set, accessing key is ${String(key)}, value is ${value}`,
+            `read only object cannot be set, accessing key is ${String(key)}, value is ${value}`,
             target
         )
         return true
