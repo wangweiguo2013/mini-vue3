@@ -1,4 +1,5 @@
 import { h } from '../../lib/mini-vue.esm.js'
+import { Foo } from './Foo.js.js'
 
 export const App = {
     setup() {
@@ -28,7 +29,8 @@ export const App = {
                     }
                 },
                 'this is from ' + this.msg
-            )
+            ),
+            h(Foo, { count: 1 })
         ])
     }
 }

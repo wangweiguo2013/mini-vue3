@@ -1,9 +1,10 @@
+import { shallowReadonly } from '../reactivity/reactive'
 import { ShapeFlags } from '../shared/shapeFlags'
 
 export const createVnode = (type, props?, children?) => {
     const vnode = {
         type,
-        props,
+        props: shallowReadonly(props),
         children,
         el: null,
         shapeFlag: getShapeFlag(type)

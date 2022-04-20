@@ -10,7 +10,7 @@ export const createComponentInstance = (vnode) => {
 
 export const setupComponent = (instance) => {
     //
-    //initProps()
+    initProps(instance)
     //initSlots()
     setupStatefulComponent(instance)
 }
@@ -18,7 +18,7 @@ function setupStatefulComponent(instance: any) {
     const component = instance.type
     const { setup } = component
     if (setup) {
-        const setupResult = setup()
+        const setupResult = setup(instance.props)
         handleSetupResult(instance, setupResult)
     }
 }
@@ -34,4 +34,7 @@ function finishComponentSetup(instance) {
     if (component.render) {
         instance.render = component.render
     }
+}
+function initProps(instance: any) {
+    instance.props = instance.vnode.props
 }

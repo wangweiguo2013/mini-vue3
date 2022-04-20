@@ -1,3 +1,4 @@
+import { isObject } from '../shared/index'
 import {
     mutableHandlers,
     ReactiveFlags,
@@ -18,6 +19,10 @@ export const shallowReadonly = function (raw) {
 }
 
 const createActiveObject = function (raw, handler) {
+    if (!isObject(raw)) {
+        console.warn(`target ${raw} is not object`)
+        return
+    }
     return new Proxy(raw, handler)
 }
 
