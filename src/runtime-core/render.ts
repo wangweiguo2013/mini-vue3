@@ -1,15 +1,17 @@
 import { isObject } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
 import { PublicInstanceProxyHandlers } from './componentPublicInstance'
+import { ShapeFlags } from '../shared/shapeFlags'
 
 export const render = (vnode, container) => {
     patch(vnode, container)
 }
 
 export const patch = (vnode, container) => {
-    if (typeof vnode.type === 'string') {
+    const { shapeFlag } = vnode
+    if (shapeFlag & ShapeFlags.ELEMENT) {
         processElement(vnode, container)
-    } else if (isObject(vnode.type)) {
+    } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
         processComponent(vnode, container)
     }
 }
@@ -45,14 +47,14 @@ function mountElement(initialVNode, container) {
     // 这里的vnode其实是element的vnode， 而不是组件的vnode
     // 因此不能在这里给el赋值
     const el = (initialVNode.el = document.createElement(initialVNode.type))
-    const { props, children } = initialVNode
+    const { props, children, shapeFlag } = initialVNode
     for (const key in props) {
         const value = props[key]
         el.setAttribute(key, value)
     }
-    if (typeof children === 'string') {
+    if (shapeFlag & ShapeFlags.TEXT_CHILD) {
         el.textContent = children
-    } else if (Array.isArray(children)) {
+    } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         mountChildren(initialVNode, el)
     }
 
