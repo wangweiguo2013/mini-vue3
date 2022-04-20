@@ -48,10 +48,19 @@ function mountElement(initialVNode, container) {
     // 因此不能在这里给el赋值
     const el = (initialVNode.el = document.createElement(initialVNode.type))
     const { props, children, shapeFlag } = initialVNode
+
+    const isEvent = (key: string) => /^on[A-Z]/.test(key)
+
     for (const key in props) {
         const value = props[key]
-        el.setAttribute(key, value)
+        if (isEvent(key)) {
+            const eventName = key.slice(2).toLocaleLowerCase()
+            el.addEventListener(eventName, value)
+        } else {
+            el.setAttribute(key, value)
+        }
     }
+
     if (shapeFlag & ShapeFlags.TEXT_CHILD) {
         el.textContent = children
     } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {

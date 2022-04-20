@@ -9,8 +9,26 @@ export const App = {
     render() {
         window.vm = this
         return h('div', { class: ['root', 'con'], id: 'root' }, [
-            h('p', { style: 'color: red' }, 'hi'),
-            h('p', { style: 'color:blue' }, 'this is from ' + this.msg)
+            h(
+                'p',
+                {
+                    style: 'color: red',
+                    onClick() {
+                        console.log('click')
+                    }
+                },
+                'hi'
+            ),
+            h(
+                'p',
+                {
+                    style: 'color:blue',
+                    onMousedown() {
+                        console.log('mousedown')
+                    }
+                },
+                'this is from ' + this.msg
+            )
         ])
     }
 }
