@@ -1,10 +1,14 @@
+import { emit } from './componentEmit'
+
 export const createComponentInstance = (vnode) => {
     const component = {
         vnode,
         type: vnode.type,
         proxy: {},
+        emit: () => {},
         setupState: {}
     }
+    component.emit = emit.bind(null, component) as any
     return component
 }
 
@@ -18,7 +22,7 @@ function setupStatefulComponent(instance: any) {
     const component = instance.type
     const { setup } = component
     if (setup) {
-        const setupResult = setup(instance.props)
+        const setupResult = setup(instance.props, { emit: instance.emit })
         handleSetupResult(instance, setupResult)
     }
 }
