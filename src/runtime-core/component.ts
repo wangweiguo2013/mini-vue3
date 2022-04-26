@@ -9,13 +9,13 @@ export const createComponentInstance = (vnode) => {
         setupState: {}
     }
     component.emit = emit.bind(null, component) as any
+
     return component
 }
 
 export const setupComponent = (instance) => {
-    //
     initProps(instance)
-    //initSlots()
+    initSlots()
     setupStatefulComponent(instance)
 }
 function setupStatefulComponent(instance: any) {
@@ -42,3 +42,4 @@ function finishComponentSetup(instance) {
 function initProps(instance: any) {
     instance.props = instance.vnode.props
 }
+function initSlots() {}
