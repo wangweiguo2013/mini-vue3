@@ -6,6 +6,7 @@ export const createComponentInstance = (vnode) => {
         type: vnode.type,
         proxy: {},
         emit: () => {},
+        slots: {},
         setupState: {}
     }
     component.emit = emit.bind(null, component) as any
@@ -14,8 +15,8 @@ export const createComponentInstance = (vnode) => {
 }
 
 export const setupComponent = (instance) => {
-    initProps(instance)
-    initSlots()
+    initProps(instance, instance.vnode.props)
+    initSlots(instance, instance.vnode.children)
     setupStatefulComponent(instance)
 }
 function setupStatefulComponent(instance: any) {
@@ -39,7 +40,9 @@ function finishComponentSetup(instance) {
         instance.render = component.render
     }
 }
-function initProps(instance: any) {
-    instance.props = instance.vnode.props
+function initProps(instance, props) {
+    instance.props = props
 }
-function initSlots() {}
+function initSlots(instance, children) {
+    instance.slots = Array.isArray(children) ? children : [children]
+}
