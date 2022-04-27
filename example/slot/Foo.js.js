@@ -7,6 +7,11 @@ export const Foo = {
     render() {
         console.log(this.$slots)
         const foo = h('p', {}, 'foo')
-        return h('div', {}, [foo, renderSlots(this.$slots)])
+        return h('div', {}, [
+            foo,
+            renderSlots(this.$slots, 'header'),
+            renderSlots(this.$slots, 'footer'),
+            renderSlots(this.$slots)
+        ])
     }
 }

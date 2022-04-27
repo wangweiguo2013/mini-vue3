@@ -44,5 +44,10 @@ function initProps(instance, props) {
     instance.props = props
 }
 function initSlots(instance, children) {
-    instance.slots = Array.isArray(children) ? children : [children]
+    const slots = {}
+    for (const key in children) {
+        const val = children[key]
+        slots[key] = Array.isArray(val) ? val : [val]
+    }
+    instance.slots = slots
 }

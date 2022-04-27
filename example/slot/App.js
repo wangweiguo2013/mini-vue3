@@ -1,4 +1,4 @@
-import { h, renderSlots } from '../../lib/mini-vue.esm.js'
+import { h } from '../../lib/mini-vue.esm.js'
 import { Foo } from './Foo.js.js'
 
 export const App = {
@@ -7,7 +7,15 @@ export const App = {
     },
     render() {
         const app = h('div', {}, 'app')
-        const foo = h(Foo, {}, [h('p', {}, '123'), h('p', {}, '1234')])
+        const foo = h(
+            Foo,
+            {},
+            {
+                default: h('p', {}, 'default'),
+                header: h('p', {}, 'header'),
+                footer: h('p', {}, 'footer')
+            }
+        )
         return h('div', {}, [app, foo])
     }
 }
