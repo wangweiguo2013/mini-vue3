@@ -11,9 +11,9 @@ export const App = {
             Foo,
             {},
             {
-                default: h('p', {}, 'default'),
-                header: h('p', {}, 'header'),
-                footer: h('p', {}, 'footer')
+                default: () => h('p', {}, 'default'),
+                header: () => h('p', {}, 'header'),
+                footer: ({ age }) => h('p', {}, 'footer' + age) // 获取组件内部的age
             }
         )
         return h('div', {}, [app, foo])

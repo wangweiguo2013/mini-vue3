@@ -1,4 +1,5 @@
 import { emit } from './componentEmit'
+import { initSlots } from './componentSlots'
 
 export const createComponentInstance = (vnode) => {
     const component = {
@@ -42,12 +43,4 @@ function finishComponentSetup(instance) {
 }
 function initProps(instance, props) {
     instance.props = props
-}
-function initSlots(instance, children) {
-    const slots = {}
-    for (const key in children) {
-        const val = children[key]
-        slots[key] = Array.isArray(val) ? val : [val]
-    }
-    instance.slots = slots
 }

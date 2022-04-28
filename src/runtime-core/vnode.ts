@@ -16,6 +16,10 @@ export const createVnode = (type, props?, children?) => {
         vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN
     }
 
+    if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT && typeof children === 'object') {
+        vnode.shapeFlag |= ShapeFlags.SLOT_CHILDREN
+    }
+
     return vnode
 }
 
