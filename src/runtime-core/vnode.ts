@@ -1,6 +1,9 @@
 import { shallowReadonly } from '../reactivity/reactive'
 import { ShapeFlags } from '../shared/shapeFlags'
 
+export const Fragment = Symbol('Fragment')
+export const Text = Symbol('Text')
+
 export const createVnode = (type, props?, children?) => {
     const vnode = {
         type,
@@ -21,6 +24,10 @@ export const createVnode = (type, props?, children?) => {
     }
 
     return vnode
+}
+
+export const createTextVNode = (text: string) => {
+    return createVnode(Text, {}, text)
 }
 
 function getShapeFlag(type) {
