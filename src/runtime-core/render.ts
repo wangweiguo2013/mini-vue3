@@ -9,7 +9,6 @@ export const render = (vnode, container) => {
 }
 
 export const patch = (vnode, container) => {
-    console.log('shapeFlag, type', vnode.shapeFlag, vnode.type, vnode)
     const { shapeFlag, type } = vnode
     switch (type) {
         case Text:
