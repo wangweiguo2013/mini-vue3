@@ -24,7 +24,9 @@ function setupStatefulComponent(instance: any) {
     const component = instance.type
     const { setup } = component
     if (setup) {
+        setCurrentInstance(instance)
         const setupResult = setup(instance.props, { emit: instance.emit })
+        setCurrentInstance(null)
         handleSetupResult(instance, setupResult)
     }
 }
@@ -43,4 +45,12 @@ function finishComponentSetup(instance) {
 }
 function initProps(instance, props) {
     instance.props = props
+}
+let currentInstance = null
+
+const setCurrentInstance = (instance) => {
+    currentInstance = instance
+}
+export const getCurrentInstance = () => {
+    return currentInstance
 }
