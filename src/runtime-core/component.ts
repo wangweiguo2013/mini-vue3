@@ -1,15 +1,19 @@
 import { emit } from './componentEmit'
 import { initSlots } from './componentSlots'
 
-export const createComponentInstance = (vnode) => {
+export const createComponentInstance = (vnode, parent) => {
     const component = {
         vnode,
         type: vnode.type,
         proxy: {},
         emit: () => {},
         slots: {},
+        parent,
+        provides: parent ? parent.provides : {},
         setupState: {}
     }
+    console.log('createComponentInstance', component)
+
     component.emit = emit.bind(null, component) as any
 
     return component
