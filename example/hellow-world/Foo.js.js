@@ -1,4 +1,4 @@
-import { h } from '../../lib/mini-vue.esm.js'
+import { createTextVNode, h } from '../../lib/mini-vue.esm.js'
 
 export const Foo = {
     setup(props) {
@@ -7,6 +7,8 @@ export const Foo = {
         props.count++
     },
     render() {
-        return h('div', { class: ['root', 'con'], id: 'root' }, 'count is ' + this.count)
+        return h('div', { class: ['root', 'con'], id: 'root' }, [
+            createTextVNode('count is ' + this.count)
+        ])
     }
 }

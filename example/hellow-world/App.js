@@ -11,6 +11,15 @@ export const App = {
         window.vm = this
         return h('div', { class: ['root', 'con'], id: 'root' }, [
             h(
+                'button',
+                {
+                    onClick() {
+                        this.msg = 'hello'
+                    }
+                },
+                '+ +'
+            ),
+            h(
                 'p',
                 {
                     style: 'color: red',
@@ -18,7 +27,7 @@ export const App = {
                         console.log('click')
                     }
                 },
-                'hi'
+                'hi' + this.msg
             ),
             h(
                 'p',
