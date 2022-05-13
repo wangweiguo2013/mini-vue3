@@ -1,3 +1,4 @@
+import { proxyRefs } from '../reactivity'
 import { emit } from './componentEmit'
 import { initSlots } from './componentSlots'
 
@@ -37,7 +38,7 @@ function setupStatefulComponent(instance: any) {
 // setup可以返回一个state对象，也可以是一个render函数
 function handleSetupResult(instance, setupResult: any) {
     if (typeof setupResult === 'object') {
-        instance.setupState = setupResult
+        instance.setupState = proxyRefs(setupResult)
     }
     finishComponentSetup(instance)
 }
