@@ -10,6 +10,8 @@ export const createComponentInstance = (vnode, parent) => {
         emit: () => {},
         slots: {},
         parent,
+        isMounted: false,
+        subtree: {},
         provides: parent ? parent.provides : {},
         setupState: {}
     }

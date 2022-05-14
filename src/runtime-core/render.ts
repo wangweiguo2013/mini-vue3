@@ -4,6 +4,7 @@ import { PublicInstanceProxyHandlers } from './componentPublicInstance'
 import { ShapeFlags } from '../shared/shapeFlags'
 import { Fragment, Text } from './vnode'
 import { createAppApi } from './createApp'
+import { effect } from '../reactivity/effect'
 
 export const createRenderer = (options) => {
     const {
@@ -12,39 +13,45 @@ export const createRenderer = (options) => {
         insert: hostInsert
     } = options
     const render = (vnode, container) => {
-        patch(vnode, container, null)
+        patch(null, vnode, container, null)
     }
-
-    const patch = (vnode, container, parentComponent) => {
-        const { shapeFlag, type } = vnode
+    /**
+     *
+     * @param n1 旧的vnode节点
+     * @param n2 新的vnode节点
+     * @param container 容器
+     * @param parentComponent 父组件
+     */
+    const patch = (n1, n2, container, parentComponent) => {
+        const { shapeFlag, type } = n2
         switch (type) {
             case Text:
-                processText(vnode, container)
+                processText(n1, n2, container)
                 break
             case Fragment:
                 // 只渲染children，不使用div等元素包裹
-                processFragment(vnode, container, parentComponent)
+                processFragment(n1, n2, container, parentComponent)
                 break
             default:
                 if (shapeFlag & ShapeFlags.ELEMENT) {
-                    processElement(vnode, container, parentComponent)
+                    processElement(n1, n2, container, parentComponent)
                 } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-                    processComponent(vnode, container, parentComponent)
+                    processComponent(n1, n2, container, parentComponent)
                 }
                 break
         }
     }
-    function processText(vnode, container) {
-        const { children } = vnode
-        const textNode = (vnode.el = document.createTextNode(children))
+    function processText(n1, n2, container) {
+        const { children } = n2
+        const textNode = (n2.el = document.createTextNode(children))
         container.append(textNode)
     }
-    function processFragment(vnode, container, parentComponent) {
-        mountChildren(vnode, container, parentComponent)
+    function processFragment(n1, n2, container, parentComponent) {
+        mountChildren(n2, container, parentComponent)
     }
 
-    function processComponent(vnode: any, container, parentComponent) {
-        mountComponent(vnode, container, parentComponent)
+    function processComponent(n1, n2: any, container, parentComponent) {
+        mountComponent(n2, container, parentComponent)
     }
 
     function mountComponent(vnode: any, container, parentComponent) {
@@ -59,15 +66,31 @@ export const createRenderer = (options) => {
     }
 
     function setupRenderEffect(instance, vnode, container: any) {
-        const { proxy } = instance
-        // 组件render返回的vnode
-        const subTree = instance.render.call(proxy)
-        patch(subTree, container, instance)
-        vnode.el = subTree.el
+        effect(() => {
+            if (!instance.isMounted) {
+                const { proxy } = instance
+                // 组件render返回的vnode
+                const subTree = (instance.subtree = instance.render.call(proxy))
+                patch(null, subTree, container, instance)
+                vnode.el = subTree.el
+                instance.isMounted = true
+            } else {
+                const { proxy } = instance
+                // 组件render返回的vnode
+                const subTree = instance.render.call(proxy)
+                const preSubtree = instance.subTree
+                console.log('subtree', subTree)
+                console.log('presubtree', preSubtree)
+                patch(preSubtree, subTree, container, instance)
+                // 更新subTree
+                instance.subTree = subTree
+            }
+        })
     }
 
-    function processElement(initialVNode: any, container: any, parentComponent) {
-        mountElement(initialVNode, container, parentComponent)
+    function processElement(n1, n2: any, container: any, parentComponent) {
+        console.log('process element')
+        mountElement(n2, container, parentComponent)
     }
 
     function mountElement(initialVNode, container, parentComponent) {
@@ -91,7 +114,7 @@ export const createRenderer = (options) => {
 
     function mountChildren(vnode, container, parentComponent) {
         vnode.children.forEach((v) => {
-            patch(v, container, parentComponent)
+            patch(null, v, container, parentComponent)
         })
     }
 
