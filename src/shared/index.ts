@@ -1,4 +1,5 @@
 export const extend = Object.assign
+export const EMPTY_OBJ = {}
 
 export const isObject = (raw) => {
     return raw !== undefined && raw !== null && typeof raw === 'object'

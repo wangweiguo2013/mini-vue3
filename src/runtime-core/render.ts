@@ -1,12 +1,10 @@
-import { isObject } from '../shared/index'
+import { EMPTY_OBJ, isObject } from '../shared/index'
 import { createComponentInstance, setupComponent } from './component'
 import { PublicInstanceProxyHandlers } from './componentPublicInstance'
 import { ShapeFlags } from '../shared/shapeFlags'
 import { Fragment, Text } from './vnode'
 import { createAppApi } from './createApp'
 import { effect } from '../reactivity/effect'
-
-const EMPTY_OBJ = {}
 
 export const createRenderer = (options) => {
     const {
@@ -111,6 +109,8 @@ export const createRenderer = (options) => {
         patchProps(el, oldProps, newProps)
     }
     function patchProps(el, oldProps, newProps) {
+        if (oldProps === newProps) return
+        // 遍历新属性，变化时执行更新
         for (const key in newProps) {
             const preVal = oldProps[key]
             const nextVal = newProps[key]
@@ -118,12 +118,15 @@ export const createRenderer = (options) => {
                 hostPatchProp(el, key, preVal, nextVal)
             }
         }
-        for (const key in oldProps) {
-            const preVal = oldProps[key]
-            const nextVal = newProps[key]
-            // 当属性被删除时，交给hostPatchProp删除改属性
-            if (nextVal === null || nextVal === undefined) {
-                hostPatchProp(el, key, preVal, nextVal)
+        // 更新被删除的属性
+        if (oldProps !== EMPTY_OBJ) {
+            for (const key in oldProps) {
+                const preVal = oldProps[key]
+                const nextVal = newProps[key]
+                // 当属性被删除时，交给hostPatchProp删除改属性
+                if (nextVal === null || nextVal === undefined) {
+                    hostPatchProp(el, key, preVal, nextVal)
+                }
             }
         }
     }

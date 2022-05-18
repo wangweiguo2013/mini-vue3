@@ -6,6 +6,7 @@ export const createElement = (type) => {
 const isEvent = (key: string) => /^on[A-Z]/.test(key)
 
 export const patchProp = (el, key, preValue, nextValue) => {
+    console.log('update prop, new value is %s, old value is %s', nextValue, preValue)
     if (isEvent(key)) {
         const eventName = key.slice(2).toLocaleLowerCase()
         el.addEventListener(eventName, nextValue)
