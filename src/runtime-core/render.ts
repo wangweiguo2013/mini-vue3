@@ -70,8 +70,8 @@ export const createRenderer = (options) => {
 
     function setupRenderEffect(instance, vnode, container: any) {
         effect(() => {
-            console.log('instance', instance)
             if (!instance.isMounted) {
+                console.log('before mount')
                 const { proxy } = instance
                 // 组件render返回的vnode
                 const subTree = (instance.subTree = instance.render.call(proxy))
@@ -111,16 +111,17 @@ export const createRenderer = (options) => {
         patchProps(el, oldProps, newProps)
     }
     function patchProps(el, oldProps, newProps) {
-        for (const key of newProps) {
+        for (const key in newProps) {
             const preVal = oldProps[key]
             const nextVal = newProps[key]
             if (preVal !== nextVal) {
                 hostPatchProp(el, key, preVal, nextVal)
             }
         }
-        for (const key of oldProps) {
+        for (const key in oldProps) {
             const preVal = oldProps[key]
             const nextVal = newProps[key]
+            // 当属性被删除时，交给hostPatchProp删除改属性
             if (nextVal === null || nextVal === undefined) {
                 hostPatchProp(el, key, preVal, nextVal)
             }
