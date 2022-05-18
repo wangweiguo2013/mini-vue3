@@ -5,12 +5,14 @@ export const createElement = (type) => {
 }
 const isEvent = (key: string) => /^on[A-Z]/.test(key)
 
-export const patchProp = (el, key, value) => {
+export const patchProp = (el, key, preValue, nextValue) => {
     if (isEvent(key)) {
         const eventName = key.slice(2).toLocaleLowerCase()
-        el.addEventListener(eventName, value)
+        el.addEventListener(eventName, nextValue)
+    } else if (nextValue === null || nextValue === undefined) {
+        el.removeAttribute(key)
     } else {
-        el.setAttribute(key, value)
+        el.setAttribute(key, nextValue)
     }
 }
 

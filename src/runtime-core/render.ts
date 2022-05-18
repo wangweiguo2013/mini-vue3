@@ -6,6 +6,8 @@ import { Fragment, Text } from './vnode'
 import { createAppApi } from './createApp'
 import { effect } from '../reactivity/effect'
 
+const EMPTY_OBJ = {}
+
 export const createRenderer = (options) => {
     const {
         createElement: hostCreateElement,
@@ -23,6 +25,7 @@ export const createRenderer = (options) => {
      * @param parentComponent 父组件
      */
     const patch = (n1, n2, container, parentComponent) => {
+        console.log('patch')
         const { shapeFlag, type } = n2
         switch (type) {
             case Text:
@@ -67,6 +70,7 @@ export const createRenderer = (options) => {
 
     function setupRenderEffect(instance, vnode, container: any) {
         effect(() => {
+            console.log('instance', instance)
             if (!instance.isMounted) {
                 const { proxy } = instance
                 // 组件render返回的vnode
@@ -75,6 +79,7 @@ export const createRenderer = (options) => {
                 vnode.el = subTree.el
                 instance.isMounted = true
             } else {
+                console.log('update')
                 const { proxy } = instance
                 // 组件render返回的vnode
                 const subTree = instance.render.call(proxy)
@@ -90,9 +95,37 @@ export const createRenderer = (options) => {
 
     function processElement(n1, n2: any, container: any, parentComponent) {
         console.log('process element')
-        mountElement(n2, container, parentComponent)
+        if (!n1) {
+            mountElement(n2, container, parentComponent)
+        } else {
+            patchElement(n1, n2, container, parentComponent)
+        }
     }
 
+    function patchElement(n1, n2, container, parentComponent) {
+        console.log('patch element')
+        const oldProps = n1.props || EMPTY_OBJ
+        const newProps = n2.props || EMPTY_OBJ
+        // 把n1的el挂载到新的vnode上
+        const el = (n2.el = n1.el)
+        patchProps(el, oldProps, newProps)
+    }
+    function patchProps(el, oldProps, newProps) {
+        for (const key of newProps) {
+            const preVal = oldProps[key]
+            const nextVal = newProps[key]
+            if (preVal !== nextVal) {
+                hostPatchProp(el, key, preVal, nextVal)
+            }
+        }
+        for (const key of oldProps) {
+            const preVal = oldProps[key]
+            const nextVal = newProps[key]
+            if (nextVal === null || nextVal === undefined) {
+                hostPatchProp(el, key, preVal, nextVal)
+            }
+        }
+    }
     function mountElement(initialVNode, container, parentComponent) {
         // 这里的vnode其实是element的vnode， 而不是组件的vnode
         // 因此不能在这里给el赋值
@@ -101,7 +134,7 @@ export const createRenderer = (options) => {
 
         for (const key in props) {
             const value = props[key]
-            hostPatchProp(el, key, value)
+            hostPatchProp(el, key, null, value)
         }
 
         if (shapeFlag & ShapeFlags.TEXT_CHILD) {
