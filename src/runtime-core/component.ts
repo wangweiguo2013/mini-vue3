@@ -11,7 +11,7 @@ export const createComponentInstance = (vnode, parent) => {
         slots: {},
         parent,
         isMounted: false,
-        subtree: {},
+        subTree: {},
         provides: parent ? parent.provides : {},
         setupState: {}
     }

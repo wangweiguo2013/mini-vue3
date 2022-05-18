@@ -74,7 +74,7 @@ export const createRenderer = (options) => {
             if (!instance.isMounted) {
                 const { proxy } = instance
                 // 组件render返回的vnode
-                const subTree = (instance.subtree = instance.render.call(proxy))
+                const subTree = (instance.subTree = instance.render.call(proxy))
                 patch(null, subTree, container, instance)
                 vnode.el = subTree.el
                 instance.isMounted = true
@@ -83,10 +83,10 @@ export const createRenderer = (options) => {
                 const { proxy } = instance
                 // 组件render返回的vnode
                 const subTree = instance.render.call(proxy)
-                const preSubtree = instance.subTree
+                const preSubTree = instance.subTree
                 console.log('subtree', subTree)
-                console.log('presubtree', preSubtree)
-                patch(preSubtree, subTree, container, instance)
+                console.log('presubtree', preSubTree)
+                patch(preSubTree, subTree, container, instance)
                 // 更新subTree
                 instance.subTree = subTree
             }
