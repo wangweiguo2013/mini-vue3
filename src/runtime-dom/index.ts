@@ -21,10 +21,15 @@ export const insert = (el, parent) => {
     parent.append(el)
 }
 
+export const setElementText = (container, text) => {
+    container.textContent = text
+}
+
 const renderer: any = createRenderer({
     createElement,
     patchProp,
-    insert
+    insert,
+    setElementText
 })
 
 export const createApp = (...args) => {
