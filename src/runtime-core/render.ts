@@ -115,17 +115,24 @@ export const createRenderer = (options) => {
         const { shapeFlag } = n2
         const c1 = n1.children
         const c2 = n2.children
-        if (preShapeFlag & ShapeFlags.TEXT_CHILD) {
-            if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-                hostSetElementText(container, '')
-                mountChildren(c2, container, parentComponent)
-            } else if (shapeFlag & ShapeFlags.TEXT_CHILD) {
-                if (c2 !== c1) {
-                    hostSetElementText(container, c2)
-                }
+        // element的children可能是array 和 text两种
+        // 如果现在是text，则直接设置文本内容
+        if (shapeFlag & ShapeFlags.TEXT_CHILD) {
+            if (c2 !== c1) {
+                hostSetElementText(container, c2)
             }
-        } else if (preShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+            // if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+            //     hostSetElementText(container, '')
+            //     mountChildren(c2, container, parentComponent)
+            // } else if (shapeFlag & ShapeFlags.TEXT_CHILD) {
+            //     if (c2 !== c1) {
+            //         hostSetElementText(container, c2)
+            //     }
+            // }
+        } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
             hostSetElementText(container, c2)
+            hostSetElementText(container, '')
+            mountChildren(c2, container, parentComponent)
         }
     }
     function patchProps(el, oldProps, newProps) {

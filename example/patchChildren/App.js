@@ -12,9 +12,9 @@ export const App = {
     render() {
         return h('div', {}, [
             // array to text
-            // h(ArrayToText),
+            h(ArrayToText)
             // text to array
-            h(TextToArray)
+            // h(TextToArray)
         ])
     }
 }
