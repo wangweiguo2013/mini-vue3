@@ -11,7 +11,8 @@ export const createRenderer = (options) => {
         createElement: hostCreateElement,
         patchProp: hostPatchProp,
         insert: hostInsert,
-        setElementText: hostSetElementText
+        setElementText: hostSetElementText,
+        remove: hostRemove
     } = options
     const render = (vnode, container) => {
         patch(null, vnode, container, null)
@@ -118,21 +119,21 @@ export const createRenderer = (options) => {
         // element的children可能是array 和 text两种
         // 如果现在是text，则直接设置文本内容
         if (shapeFlag & ShapeFlags.TEXT_CHILD) {
+            if (preShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+                unmountChildren(c1)
+            }
             if (c2 !== c1) {
                 hostSetElementText(container, c2)
             }
-            // if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-            //     hostSetElementText(container, '')
-            //     mountChildren(c2, container, parentComponent)
-            // } else if (shapeFlag & ShapeFlags.TEXT_CHILD) {
-            //     if (c2 !== c1) {
-            //         hostSetElementText(container, c2)
-            //     }
-            // }
         } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-            hostSetElementText(container, c2)
             hostSetElementText(container, '')
             mountChildren(c2, container, parentComponent)
+        }
+    }
+    function unmountChildren(children) {
+        for (let i = 0; i < children.length; i++) {
+            const el = children[i].el
+            hostRemove(el)
         }
     }
     function patchProps(el, oldProps, newProps) {

@@ -24,12 +24,17 @@ export const insert = (el, parent) => {
 export const setElementText = (container, text) => {
     container.textContent = text
 }
+export const remove = (el) => {
+    const parent = el.parentNode
+    parent & parent.remove(el)
+}
 
 const renderer: any = createRenderer({
     createElement,
     patchProp,
     insert,
-    setElementText
+    setElementText,
+    remove
 })
 
 export const createApp = (...args) => {
