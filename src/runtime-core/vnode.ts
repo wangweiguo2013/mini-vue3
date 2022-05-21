@@ -9,6 +9,7 @@ export const createVnode = (type, props?, children?) => {
         type,
         props: shallowReadonly(props),
         children,
+        key: props && props.key,
         el: null,
         shapeFlag: getShapeFlag(type)
     }

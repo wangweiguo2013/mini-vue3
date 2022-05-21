@@ -17,8 +17,8 @@ export const patchProp = (el, key, preValue, nextValue) => {
     }
 }
 
-export const insert = (el, parent) => {
-    parent.append(el)
+export const insert = (child, parent, anchor = null) => {
+    parent.insertBefore(child, anchor)
 }
 
 export const setElementText = (container, text) => {
@@ -26,7 +26,7 @@ export const setElementText = (container, text) => {
 }
 export const remove = (el) => {
     const parent = el.parentNode
-    parent & parent.remove(el)
+    parent & parent.removeChild(el)
 }
 
 const renderer: any = createRenderer({

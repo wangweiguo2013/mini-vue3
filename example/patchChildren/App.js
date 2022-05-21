@@ -1,6 +1,7 @@
 import { createTextVNode, h, provide, inject } from '../../lib/mini-vue.esm.js'
 import { ArrayToText } from './ArrayToText.js'
 import { TextToArray } from './TextToArray.js'
+import { ArrayToArray } from './ArrayToArray.js'
 
 export const App = {
     name: 'app',
@@ -12,9 +13,10 @@ export const App = {
     render() {
         return h('div', {}, [
             // array to text
-            h(ArrayToText)
+            // h(ArrayToText)
             // text to array
             // h(TextToArray)
+            h(ArrayToArray)
         ])
     }
 }
