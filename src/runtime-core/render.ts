@@ -175,8 +175,14 @@ export const createRenderer = (options) => {
                     i++
                 }
             }
+        } else if (i > e2) {
+            while (i <= e1) {
+                hostRemove(c1[i].el)
+                i++
+            }
+            // 新的比旧的少
+        } else {
         }
-        // 新的比旧的少
     }
 
     function unmountChildren(children) {

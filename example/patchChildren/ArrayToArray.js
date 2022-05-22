@@ -30,13 +30,38 @@ import { h, ref } from '../../lib/mini-vue.esm.js'
 // ]
 
 // 3. 新的比老的长
-const preChildren = [h('p', { key: 'A' }, 'A'), h('p', { key: 'B' }, 'B')]
-const nextChildren = [
+// const preChildren = [h('p', { key: 'A' }, 'A'), h('p', { key: 'B' }, 'B')]
+// const nextChildren = [
+//     h('p', { key: 'C' }, 'C'),
+//     h('p', { key: 'D' }, 'D'),
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B')
+// ]
+// 3. 新的比老的短
+const preChildren = [
     h('p', { key: 'C' }, 'C'),
     h('p', { key: 'D' }, 'D'),
     h('p', { key: 'A' }, 'A'),
     h('p', { key: 'B' }, 'B')
 ]
+const nextChildren = [h('p', { key: 'C' }, 'C'), h('p', { key: 'D' }, 'D')]
+// 5. 中间对比
+// const preChildren = [
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B'),
+//     h('p', { key: 'C', id: 'pre-c' }, 'C'),
+//     h('p', { key: 'D' }, 'D'),
+//     h('p', { key: 'F' }, 'F'),
+//     h('p', { key: 'G' }, 'G')
+// ]
+// const nextChildren = [
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B'),
+//     h('p', { key: 'E' }, 'E'),
+//     h('p', { key: 'C', id: 'next-c' }, 'C'),
+//     h('p', { key: 'F' }, 'F'),
+//     h('p', { key: 'G' }, 'G')
+// ]
 
 export const ArrayToArray = {
     setup() {
