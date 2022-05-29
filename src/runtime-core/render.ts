@@ -176,12 +176,53 @@ export const createRenderer = (options) => {
                 }
             }
         } else if (i > e2) {
+            // 新的比旧的少
             while (i <= e1) {
                 hostRemove(c1[i].el)
                 i++
             }
-            // 新的比旧的少
         } else {
+            // 中间对比
+            // 新旧节点的初始值
+            let s1 = i
+            let s2 = i
+
+            const toBePatched = e2 - s2 + 1 // 需要处理的节点数量，因为是用index值求数量，所以要+1
+            let patched = 0
+            const keyToNewIndexMap = new Map()
+
+            for (let i = s2; i <= e2; i++) {
+                const nextChild = c2[i]
+                // 储存节点对应的新索引
+                keyToNewIndexMap.set(nextChild.key, i)
+            }
+
+            for (let i = s1; i <= e1; i++) {
+                const preChild = c1[i]
+                // 如果已更新的数量大于更新完的数量，直接把剩余的删除
+                if (patched >= toBePatched) {
+                    hostRemove(preChild.el)
+                    continue
+                }
+
+                let newIndex
+                if (preChild.key != null) {
+                    newIndex = keyToNewIndexMap.get(preChild.key)
+                } else {
+                    for (let j = s2; j < e2; j++) {
+                        if (isSameVnodeType(preChild, c2[j])) {
+                            newIndex = j
+                            break
+                        }
+                    }
+                    if (newIndex === undefined) {
+                        hostRemove(preChild.el``)
+                    } else {
+                        patch(preChild, c2[newIndex], container, parentComponent, null)
+                        patched++
+                    }
+                }
+            }
         }
     }
 
