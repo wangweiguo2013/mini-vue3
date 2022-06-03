@@ -168,7 +168,8 @@ export const createRenderer = (options) => {
         // 新的比旧的多
         if (i > e1) {
             if (i <= e2) {
-                const anchor = c2[e2 + 1].el
+                const nextPos = e2 + 1
+                const anchor = nextPos < l2 ? c2[nextPos].el : null
                 console.log('anchor', anchor)
                 while (i <= e2) {
                     patch(null, c2[i], container, parentComponent, anchor)
@@ -190,6 +191,11 @@ export const createRenderer = (options) => {
             const toBePatched = e2 - s2 + 1 // 需要处理的节点数量，因为是用index值求数量，所以要+1
             let patched = 0
             const keyToNewIndexMap = new Map()
+            const newIndexToOldIndexMap = new Array(toBePatched) // 固定长度数组有更好的性能
+            let moved = false
+            let maxNewIndexSoFar = 0
+            // 初始化数组
+            for (let i = 0; i < toBePatched; i++) newIndexToOldIndexMap[i] = 0
 
             for (let i = s2; i <= e2; i++) {
                 const nextChild = c2[i]
@@ -216,10 +222,38 @@ export const createRenderer = (options) => {
                         }
                     }
                     if (newIndex === undefined) {
-                        hostRemove(preChild.el``)
+                        hostRemove(preChild.el)
                     } else {
+                        if (newIndex >= maxNewIndexSoFar) {
+                            maxNewIndexSoFar = newIndex
+                        } else {
+                            moved = true
+                        }
+
+                        newIndexToOldIndexMap[newIndex - s2] = i + 1 //因为0是初始值，这里这里加1防止出现等于0 的情况
                         patch(preChild, c2[newIndex], container, parentComponent, null)
                         patched++
+                    }
+                }
+                const increasingNewIndexSequence = moved ? getSequence(newIndexToOldIndexMap) : []
+                let j = increasingNewIndexSequence.length - 1
+
+                // 从右边开始循环
+                // 如果从左边开始，则右边元素可能还会移动，会导致左边元素移动的锚点不可靠
+                for (let i = toBePatched; i >= 0; i--) {
+                    const nextIndex = i + s2
+                    const nextChild = c2[nextIndex]
+                    const anchor = nextIndex + 1 < l2 ? c2[newIndex + 1].el : null
+
+                    if (newIndexToOldIndexMap[i] === 0) {
+                        //不需要移动的
+                        patch(null, nextChild, container, parentComponent, anchor)
+                    } else if (moved) {
+                        if (j < 0 || i !== increasingNewIndexSequence[j]) {
+                            hostInsert(nextChild.el, container, anchor)
+                        } else {
+                            j--
+                        }
                     }
                 }
             }
@@ -282,4 +316,45 @@ export const createRenderer = (options) => {
     return {
         createApp: createAppApi(render)
     }
+}
+
+function getSequence(arr) {
+    const p = arr.slice()
+    const result = [0]
+    let i, j, u, v, c
+    const len = arr.length
+    for (i = 0; i < len; i++) {
+        const arrI = arr[i]
+        if (arrI !== 0) {
+            j = result[result.length - 1]
+            if (arr[j] < arrI) {
+                p[i] = j
+                result.push(i)
+                continue
+            }
+            u = 0
+            v = result.length - 1
+            while (u < v) {
+                c = (u + v) >> 1
+                if (arr[result[c]] < arrI) {
+                    u = c + 1
+                } else {
+                    v = c
+                }
+            }
+            if (arrI < arr[result[u]]) {
+                if (u > 0) {
+                    p[i] = result[u - 1]
+                }
+                result[u] = i
+            }
+        }
+    }
+    u = result.length
+    v = result[u - 1]
+    while (u-- > 0) {
+        result[u] = v
+        v = p[v]
+    }
+    return result
 }

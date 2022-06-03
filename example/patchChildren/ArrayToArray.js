@@ -46,26 +46,46 @@ import { h, ref } from '../../lib/mini-vue.esm.js'
 // ]
 // const nextChildren = [h('p', { key: 'C' }, 'C'), h('p', { key: 'D' }, 'D')]
 // 5. 中间对比
+// const preChildren = [
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B'),
+//     h('p', { key: 'C', id: 'pre-c' }, 'C'),
+//     h('p', { key: 'D' }, 'D'),
+//     h('p', { key: 'F' }, 'F'),
+//     h('p', { key: 'G' }, 'G')
+// ]
+// const nextChildren = [
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B'),
+//     h('p', { key: 'E' }, 'E'),
+//     h('p', { key: 'C', id: 'next-c' }, 'C'),
+//     h('p', { key: 'F' }, 'F'),
+//     h('p', { key: 'G' }, 'G')
+// ]
+
 const preChildren = [
     h('p', { key: 'A' }, 'A'),
     h('p', { key: 'B' }, 'B'),
-    h('p', { key: 'C', id: 'pre-c' }, 'C'),
+    h('p', { key: 'C' }, 'C'),
     h('p', { key: 'D' }, 'D'),
+    h('p', { key: 'E' }, 'E'),
     h('p', { key: 'F' }, 'F'),
     h('p', { key: 'G' }, 'G')
 ]
+
 const nextChildren = [
     h('p', { key: 'A' }, 'A'),
     h('p', { key: 'B' }, 'B'),
     h('p', { key: 'E' }, 'E'),
-    h('p', { key: 'C', id: 'next-c' }, 'C'),
+    h('p', { key: 'C' }, 'C'),
+    h('p', { key: 'D' }, 'D'),
     h('p', { key: 'F' }, 'F'),
     h('p', { key: 'G' }, 'G')
 ]
 
 export const ArrayToArray = {
     setup() {
-        const isChange = ref(true)
+        const isChange = ref(false)
         window.isChange = isChange
 
         return {
@@ -73,7 +93,7 @@ export const ArrayToArray = {
         }
     },
     render() {
-        const children = this.isChange ? preChildren : nextChildren
+        const children = this.isChange ? nextChildren : preChildren
         return h('div', {}, children)
     }
 }
