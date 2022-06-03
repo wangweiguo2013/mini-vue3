@@ -136,48 +136,54 @@ export const createRenderer = (options) => {
             }
         }
     }
+
     function patchKeyedChildren(c1, c2, container, parentComponent, parentAnchor) {
+        const l2 = c2.length
         let i = 0
         let e1 = c1.length - 1
-        let e2 = c2.length - 1
-        const l2 = c2.length
-        console.log('patch keyed children')
-        //左指针i开始从左侧对比
+        let e2 = l2 - 1
+
+        function isSomeVNodeType(n1, n2) {
+            return n1.type === n2.type && n1.key === n2.key
+        }
+
         while (i <= e1 && i <= e2) {
             const n1 = c1[i]
             const n2 = c2[i]
-            if (isSameVnodeType(n1, n2)) {
+
+            if (isSomeVNodeType(n1, n2)) {
                 patch(n1, n2, container, parentComponent, parentAnchor)
             } else {
                 break
             }
+
             i++
         }
-        //从右指针开始对比
+
         while (i <= e1 && i <= e2) {
             const n1 = c1[e1]
             const n2 = c2[e2]
-            if (isSameVnodeType(n1, n2)) {
+
+            if (isSomeVNodeType(n1, n2)) {
                 patch(n1, n2, container, parentComponent, parentAnchor)
             } else {
                 break
             }
+
             e1--
             e2--
         }
-        // 新的比旧的多
+
         if (i > e1) {
             if (i <= e2) {
                 const nextPos = e2 + 1
                 const anchor = nextPos < l2 ? c2[nextPos].el : null
-                console.log('anchor', anchor)
                 while (i <= e2) {
                     patch(null, c2[i], container, parentComponent, anchor)
                     i++
                 }
             }
         } else if (i > e2) {
-            // 新的比旧的少
             while (i <= e1) {
                 hostRemove(c1[i].el)
                 i++
@@ -191,7 +197,7 @@ export const createRenderer = (options) => {
             const toBePatched = e2 - s2 + 1 // 需要处理的节点数量，因为是用index值求数量，所以要+1
             let patched = 0
             const keyToNewIndexMap = new Map()
-            const newIndexToOldIndexMap = new Array(toBePatched) // 固定长度数组有更好的性能
+            const newIndexToOldIndexMap = new Array(toBePatched)
             let moved = false
             let maxNewIndexSoFar = 0
             // 初始化数组
@@ -204,56 +210,60 @@ export const createRenderer = (options) => {
             }
 
             for (let i = s1; i <= e1; i++) {
-                const preChild = c1[i]
+                const prevChild = c1[i]
                 // 如果已更新的数量大于更新完的数量，直接把剩余的删除
+
                 if (patched >= toBePatched) {
-                    hostRemove(preChild.el)
+                    hostRemove(prevChild.el)
                     continue
                 }
 
                 let newIndex
-                if (preChild.key != null) {
-                    newIndex = keyToNewIndexMap.get(preChild.key)
+                if (prevChild.key != null) {
+                    newIndex = keyToNewIndexMap.get(prevChild.key)
                 } else {
                     for (let j = s2; j < e2; j++) {
-                        if (isSameVnodeType(preChild, c2[j])) {
+                        if (isSomeVNodeType(prevChild, c2[j])) {
                             newIndex = j
+
                             break
                         }
                     }
-                    if (newIndex === undefined) {
-                        hostRemove(preChild.el)
-                    } else {
-                        if (newIndex >= maxNewIndexSoFar) {
-                            maxNewIndexSoFar = newIndex
-                        } else {
-                            moved = true
-                        }
-
-                        newIndexToOldIndexMap[newIndex - s2] = i + 1 //因为0是初始值，这里这里加1防止出现等于0 的情况
-                        patch(preChild, c2[newIndex], container, parentComponent, null)
-                        patched++
-                    }
                 }
-                const increasingNewIndexSequence = moved ? getSequence(newIndexToOldIndexMap) : []
-                let j = increasingNewIndexSequence.length - 1
 
-                // 从右边开始循环
-                // 如果从左边开始，则右边元素可能还会移动，会导致左边元素移动的锚点不可靠
-                for (let i = toBePatched - 1; i >= 0; i--) {
-                    const nextIndex = i + s2
-                    const nextChild = c2[nextIndex]
-                    const anchor = nextIndex + 1 < l2 ? c2[nextIndex + 1].el : null
+                if (newIndex === undefined) {
+                    hostRemove(prevChild.el)
+                } else {
+                    if (newIndex >= maxNewIndexSoFar) {
+                        maxNewIndexSoFar = newIndex
+                    } else {
+                        moved = true
+                    }
 
-                    if (newIndexToOldIndexMap[i] === 0) {
-                        //不需要移动的
-                        patch(null, nextChild, container, parentComponent, anchor)
-                    } else if (moved) {
-                        if (j < 0 || i !== increasingNewIndexSequence[j]) {
-                            hostInsert(nextChild.el, container, anchor)
-                        } else {
-                            j--
-                        }
+                    newIndexToOldIndexMap[newIndex - s2] = i + 1 //因为0是初始值，这里这里加1防止出现等于0 的情况
+                    patch(prevChild, c2[newIndex], container, parentComponent, null)
+                    patched++
+                }
+            }
+
+            const increasingNewIndexSequence = moved ? getSequence(newIndexToOldIndexMap) : []
+            let j = increasingNewIndexSequence.length - 1
+
+            // 从右边开始循环
+            // 如果从左边开始，则右边元素可能还会移动，会导致左边元素移动的锚点不可靠
+            for (let i = toBePatched - 1; i >= 0; i--) {
+                const nextIndex = i + s2
+                const nextChild = c2[nextIndex]
+                const anchor = nextIndex + 1 < l2 ? c2[nextIndex + 1].el : null
+
+                if (newIndexToOldIndexMap[i] === 0) {
+                    //不需要移动的
+                    patch(null, nextChild, container, parentComponent, anchor)
+                } else if (moved) {
+                    if (j < 0 || i !== increasingNewIndexSequence[j]) {
+                        hostInsert(nextChild.el, container, anchor)
+                    } else {
+                        j--
                     }
                 }
             }
