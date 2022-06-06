@@ -1,5 +1,7 @@
 import { proxyRefs } from '../reactivity'
+import { shallowReadonly } from '../reactivity/reactive'
 import { emit } from './componentEmit'
+import { PublicInstanceProxyHandlers } from './componentPublicInstance'
 import { initSlots } from './componentSlots'
 
 export const createComponentInstance = (vnode, parent) => {
@@ -10,6 +12,7 @@ export const createComponentInstance = (vnode, parent) => {
         emit: () => {},
         slots: {},
         parent,
+        next: null, // 下一个要更新的vnode
         isMounted: false,
         subTree: {},
         provides: parent ? parent.provides : {},
@@ -29,10 +32,13 @@ export const setupComponent = (instance) => {
 }
 function setupStatefulComponent(instance: any) {
     const component = instance.type
+    //  ctx
+    instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers)
+
     const { setup } = component
     if (setup) {
         setCurrentInstance(instance)
-        const setupResult = setup(instance.props, { emit: instance.emit })
+        const setupResult = setup(shallowReadonly(instance.props), { emit: instance.emit })
         setCurrentInstance(null)
         handleSetupResult(instance, setupResult)
     }

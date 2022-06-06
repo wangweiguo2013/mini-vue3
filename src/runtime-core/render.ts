@@ -5,6 +5,7 @@ import { ShapeFlags } from '../shared/shapeFlags'
 import { Fragment, Text } from './vnode'
 import { createAppApi } from './createApp'
 import { effect } from '../reactivity/effect'
+import { shouldUpdateComponent } from './componentUpdate'
 
 export const createRenderer = (options) => {
     const {
@@ -53,25 +54,40 @@ export const createRenderer = (options) => {
         mountChildren(n2.children, container, parentComponent, anchor)
     }
 
-    function processComponent(n1, n2: any, container, parentComponent) {
-        mountComponent(n2, container, parentComponent)
+    function processComponent(n1, n2, container, parentComponent) {
+        if (!n1) {
+            mountComponent(n2, container, parentComponent)
+        } else {
+            updateComponent(n1, n2)
+        }
     }
 
-    function mountComponent(vnode: any, container, parentComponent) {
-        const instance = createComponentInstance(vnode, parentComponent)
+    function updateComponent(n1, n2) {
+        const instance = (n2.component = n1.component)
+        if (shouldUpdateComponent(n1, n2)) {
+            instance.next = n2
+            instance.update()
+        } else {
+            // 更新vnode
+            n2.el = n1.el
+            instance.vnode = n2
+        }
+    }
+
+    function mountComponent(initialVNode: any, container, parentComponent) {
+        const instance = (initialVNode.component = createComponentInstance(
+            initialVNode,
+            parentComponent
+        ))
         setupComponent(instance)
-        const { setupState } = instance
 
-        //  ctx
-        instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers)
-
-        setupRenderEffect(instance, vnode, container)
+        setupRenderEffect(instance, initialVNode, container)
     }
 
     function setupRenderEffect(instance, vnode, container: any) {
-        effect(() => {
+        instance.update = effect(() => {
             if (!instance.isMounted) {
-                console.log('before mount')
+                console.log('patch mount')
                 const { proxy } = instance
                 // 组件render返回的vnode
                 const subTree = (instance.subTree = instance.render.call(proxy))
@@ -79,18 +95,26 @@ export const createRenderer = (options) => {
                 vnode.el = subTree.el
                 instance.isMounted = true
             } else {
-                console.log('update')
+                console.log('patch update')
+                const { next, vnode } = instance
+                if (next) {
+                    next.el = vnode.el
+                    updateComponentPreRender(next, instance)
+                }
                 const { proxy } = instance
                 // 组件render返回的vnode
                 const subTree = instance.render.call(proxy)
                 const preSubTree = instance.subTree
-                console.log('subtree', subTree)
-                console.log('presubtree', preSubTree)
                 patch(preSubTree, subTree, container, instance, null)
                 // 更新subTree
                 instance.subTree = subTree
             }
         })
+    }
+    function updateComponentPreRender(nextVNode, instance) {
+        instance.next = null
+        instance.props = nextVNode.props
+        instance.vnode = nextVNode
     }
 
     function processElement(n1, n2: any, container: any, parentComponent, anchor) {

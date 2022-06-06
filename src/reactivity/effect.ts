@@ -75,8 +75,6 @@ export const trackEffect = function (dep) {
 }
 
 export const triggerEffect = function (dep) {
-    // 优化
-    if (!dep.has(activeEffect)) return
     dep.forEach((_effect) => {
         if (_effect.scheduler) {
             _effect.scheduler()

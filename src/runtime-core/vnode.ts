@@ -10,6 +10,7 @@ export const createVnode = (type, props?, children?) => {
         props: shallowReadonly(props),
         children,
         key: props && props.key,
+        component: null, // instance实例
         el: null,
         shapeFlag: getShapeFlag(type)
     }
