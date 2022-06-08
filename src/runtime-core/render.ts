@@ -6,6 +6,7 @@ import { Fragment, Text } from './vnode'
 import { createAppApi } from './createApp'
 import { effect } from '../reactivity/effect'
 import { shouldUpdateComponent } from './componentUpdate'
+import { queueJobs } from './scheduler'
 
 export const createRenderer = (options) => {
     const {
@@ -85,31 +86,38 @@ export const createRenderer = (options) => {
     }
 
     function setupRenderEffect(instance, vnode, container: any) {
-        instance.update = effect(() => {
-            if (!instance.isMounted) {
-                console.log('patch mount')
-                const { proxy } = instance
-                // 组件render返回的vnode
-                const subTree = (instance.subTree = instance.render.call(proxy))
-                patch(null, subTree, container, instance, null)
-                vnode.el = subTree.el
-                instance.isMounted = true
-            } else {
-                console.log('patch update')
-                const { next, vnode } = instance
-                if (next) {
-                    next.el = vnode.el
-                    updateComponentPreRender(next, instance)
+        instance.update = effect(
+            () => {
+                if (!instance.isMounted) {
+                    console.log('patch mount')
+                    const { proxy } = instance
+                    // 组件render返回的vnode
+                    const subTree = (instance.subTree = instance.render.call(proxy))
+                    patch(null, subTree, container, instance, null)
+                    vnode.el = subTree.el
+                    instance.isMounted = true
+                } else {
+                    console.log('patch update')
+                    const { next, vnode } = instance
+                    if (next) {
+                        next.el = vnode.el
+                        updateComponentPreRender(next, instance)
+                    }
+                    const { proxy } = instance
+                    // 组件render返回的vnode
+                    const subTree = instance.render.call(proxy)
+                    const preSubTree = instance.subTree
+                    patch(preSubTree, subTree, container, instance, null)
+                    // 更新subTree
+                    instance.subTree = subTree
                 }
-                const { proxy } = instance
-                // 组件render返回的vnode
-                const subTree = instance.render.call(proxy)
-                const preSubTree = instance.subTree
-                patch(preSubTree, subTree, container, instance, null)
-                // 更新subTree
-                instance.subTree = subTree
+            },
+            {
+                scheduler() {
+                    queueJobs(instance.update)
+                }
             }
-        })
+        )
     }
     function updateComponentPreRender(nextVNode, instance) {
         instance.next = null
