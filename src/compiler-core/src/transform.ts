@@ -4,10 +4,16 @@
  * 测试的时候也方便按需测试
  */
 
-export const transform = (root, options) => {
+export const transform = (root, options = {}) => {
     const context = createTransformContext(root, options)
     traverseNode(root, context)
+
+    createCodegenNode(root)
     return root
+}
+
+function createCodegenNode(root: any) {
+    root.codegenNode = root.children[0]
 }
 
 function traverseNode(node, context) {
